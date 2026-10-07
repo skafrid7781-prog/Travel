@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Tourism Audio Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #0f766e, #115e59);
+      color: white;
+      padding: 24px 6%;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    nav h1 { font-size: 24px; }
+    nav a { color: white; text-decoration: none; margin-left: 18px; }
+    .hero {
+      padding: 70px 6%;
+      text-align: center;
+      background: white;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 12px; }
+    .hero p { max-width: 700px; margin: auto; color: #64748b; }
+    .container { width: 88%; max-width: 1100px; margin: 35px auto; }
+    .controls {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 15px;
+      align-items: end;
+    }
+    label { font-weight: bold; display: block; margin-bottom: 6px; }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 15px;
+    }
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #115e59; }
+    .site-card {
+      margin-top: 28px;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    }
+    .site-image {
+      height: 260px;
+      background: linear-gradient(135deg, #99f6e4, #ccfbf1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 70px;
+    }
+    .site-content { padding: 28px; }
+    .site-content h3 { font-size: 30px; margin-bottom: 8px; }
+    .tag {
+      display: inline-block;
+      background: #ccfbf1;
+      color: #115e59;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 22px 0;
+    }
+    .info-box {
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+    .audio-box {
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    audio { width: 100%; margin-top: 12px; }
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+    }
+    .success { display: block; background: #dcfce7; color: #166534; }
+    .error { display: block; background: #fee2e2; color: #991b1b; }
+    footer {
+      text-align: center;
+      padding: 25px;
+      margin-top: 50px;
+      background: #0f172a;
+      color: white;
+    }
+    @media (max-width: 700px) {
+      .hero h2 { font-size: 30px; }
+      .controls, .info-grid { grid-template-columns: 1fr; }
+      nav { flex-direction: column; }
+      nav a { margin: 0 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <h1>🌍 Local Tourism Audio Guide</h1>
+    <div>
+      <a href="#explore">Explore</a>
+      <a href="#about">About</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Discover Heritage. Hear the History.</h2>
+  <p>
+    Select a heritage site and your preferred language to explore its
+    description, history, navigation information and audio guide.
+  </p>
+</section>
+
+<main class="container" id="explore">
+  <div class="controls">
+    <div>
+      <label for="site">Select Heritage Site</label>
+      <select id="site">
+        <option value="">-- Select a site --</option>
+        <option value="amaravati">Amaravati Stupa</option>
+        <option value="kondapalli">Kondapalli Fort</option>
+        <option value="undavalli">Undavalli Caves</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="language">Preferred Language</label>
+      <select id="language">
+        <option value="">-- Select language --</option>
+        <option>English</option>
+        <option>Telugu</option>
+        <option>Hindi</option>
+      </select>
+    </div>
+
+    <button onclick="loadSite()">View Guide</button>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <section class="site-card" id="siteCard" style="display:none;">
+    <div class="site-image" id="siteIcon">🏛️</div>
+    <div class="site-content">
+      <span class="tag" id="siteTag">Heritage Site</span>
+      <h3 id="siteName"></h3>
+      <p id="siteDescription"></p>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <strong>📜 History</strong>
+          <p id="history"></p>
+        </div>
+        <div class="info-box">
+          <strong>📍 Navigation</strong>
+          <p id="navigation"></p>
+        </div>
+        <div class="info-box">
+          <strong>🗣️ Language</strong>
+          <p id="selectedLanguage"></p>
+        </div>
+      </div>
+
+      <div class="audio-box">
+        <h3>🎧 Audio Guide</h3>
+        <p>Listen to the audio guide for this heritage site.</p>
+        <audio id="audioPlayer" controls>
+          <source src="" type="audio/mpeg">
+          Your browser does not support audio playback.
+        </audio>
+        <p style="margin-top:8px;font-size:13px;color:#64748b;">
+          Connect this player to your Spring Boot audio/file API later.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="about">
+  <p>© 2026 Local Tourism Audio Guide | Java Spring Boot + React Project</p>
+</footer>
+
+<script>
+const sites = {
+  amaravati: {
+    name: "Amaravati Stupa",
+    icon: "🏛️",
+    tag: "Buddhist Heritage",
+    description: "Amaravati is a historic Buddhist site known for its ancient stupa and remarkable sculptural heritage.",
+    history: "The Amaravati Stupa is an ancient Buddhist monument associated with the Satavahana period and later Buddhist traditions.",
+    navigation: "Located near Amaravati in Andhra Pradesh. Replace this text with Google Maps or your navigation API link.",
+    audio: ""
+  },
+  kondapalli: {
+    name: "Kondapalli Fort",
+    icon: "🏰",
+    tag: "Historic Fort",
+    description: "Kondapalli Fort is a historic hill fort known for its architecture, scenic surroundings and cultural importance.",
+    history: "The fort has a long history in the region and has been associated with several ruling dynasties.",
+    navigation: "Located near Kondapalli, Andhra Pradesh. Replace this text with your maps/navigation API information.",
+    audio: ""
+  },
+  undavalli: {
+    name: "Undavalli Caves",
+    icon: "🪨",
+    tag: "Rock-Cut Heritage",
+    description: "Undavalli Caves are famous rock-cut caves featuring impressive ancient architectural and sculptural work.",
+    history: "The caves are generally dated to the early medieval period and contain important examples of rock-cut architecture.",
+    navigation: "Located near Vijayawada, Andhra Pradesh. Replace this text with your maps/navigation API information.",
+    audio: ""
+  }
+};
+
+function loadSite() {
+  const site = document.getElementById("site").value;
+  const language = document.getElementById("language").value;
+  const message = document.getElementById("message");
+  const card = document.getElementById("siteCard");
+
+  message.className = "message";
+  message.textContent = "";
+
+  if (!site || !language) {
+    message.textContent = "Please select both a heritage site and preferred language.";
+    message.classList.add("error");
+    card.style.display = "none";
+    return;
+  }
+
+  const data = sites[site];
+
+  document.getElementById("siteIcon").textContent = data.icon;
+  document.getElementById("siteTag").textContent = data.tag;
+  document.getElementById("siteName").textContent = data.name;
+  document.getElementById("siteDescription").textContent = data.description;
+  document.getElementById("history").textContent = data.history;
+  document.getElementById("navigation").textContent = data.navigation;
+  document.getElementById("selectedLanguage").textContent = language;
+
+  if (data.audio) {
+    document.getElementById("audioPlayer").src = data.audio;
+  } else {
+    document.getElementById("audioPlayer").removeAttribute("src");
+  }
+
+  card.style.display = "block";
+  message.textContent = "Guide loaded successfully.";
+  message.classList.add("success");
+}
+</script>
+
+</body>
+</html>
